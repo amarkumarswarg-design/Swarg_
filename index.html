@@ -9,118 +9,100 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;700&display=swap');
         
         :root {
-            --wa-teal: #075E54;
-            --wa-green: #25D366;
-            --wa-light-green: #dcf8c6;
-            --wa-bg: #E5DDD5;
-            --wa-tab-active: #ffffff;
-            --wa-tab-inactive: rgba(255,255,255,0.7);
+            --wa-bg-dark: #0b141a;
+            --wa-header-dark: #111b21;
+            --wa-green: #00a884;
+            --wa-text-primary: #e9edef;
+            --wa-text-secondary: #8696a0;
+            --wa-chat-bubble-me: #005c4b;
+            --wa-chat-bubble-them: #202c33;
+            --wa-link-green: #53bdeb;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--wa-bg-dark);
+            color: var(--wa-text-primary);
             height: 100vh;
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* WHATSAPP TAB SYSTEM */
-        .tab-content { display: none; }
-        .active-tab { display: block; }
+        /* WHATSAPP DARK UI */
+        .dark-header { background-color: var(--wa-header-dark); }
+        .tab-active { border-bottom: 3px solid var(--wa-green); color: var(--wa-green); }
         
-        .wa-header { background-color: var(--wa-teal); color: white; }
-        .wa-nav-tabs { background-color: var(--wa-teal); display: flex; text-align: center; }
-        .wa-tab { 
-            flex: 1; 
-            padding: 12px 0; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            font-size: 14px; 
-            color: var(--wa-tab-inactive);
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-        }
-        .wa-tab.active { 
-            color: var(--wa-tab-active); 
-            border-bottom: 3px solid white; 
+        .chat-list-item:active { background-color: #202c33; }
+        
+        /* 3-DOT MENU DROPDOWN */
+        #menu-dropdown {
+            background-color: #233138;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            z-index: 500;
         }
 
+        /* PROFILE SCREEN (Exact matching provided photo) */
+        .profile-view { background-color: #111b21; }
+        .edit-green { color: #00a884; font-weight: 500; }
+        .profile-icon { color: #8696a0; font-size: 20px; }
+
         /* CHAT BUBBLES */
-        .msg-bubble {
-            max-width: 80%;
+        .msg-box {
+            max-width: 85%;
             padding: 8px 12px;
             border-radius: 8px;
             margin-bottom: 4px;
             font-size: 15px;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.2);
             position: relative;
         }
-        .msg-sent { background-color: var(--wa-light-green); align-self: flex-end; }
-        .msg-received { background-color: white; align-self: flex-start; }
-        .msg-time { font-size: 10px; color: #888; float: right; margin: 4px 0 0 8px; }
+        .msg-me { background-color: var(--wa-chat-bubble-me); align-self: flex-end; }
+        .msg-them { background-color: var(--wa-chat-bubble-them); align-self: flex-start; }
 
-        /* AUTH INTERFACE */
-        .auth-card {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        /* LAYOUT ARCHITECTURE */
         #app-grid {
             display: grid;
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: 400px 1fr;
             height: 100vh;
-            background-color: white;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 850px) {
             #app-grid { grid-template-columns: 1fr; }
-            .chat-window { position: fixed; inset: 0; z-index: 200; display: none; }
-            .chat-window.active { display: flex; }
-        }
-
-        .chat-area {
-            background-color: var(--wa-bg);
-            background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-            background-size: contain;
+            .chat-viewport { position: fixed; inset: 0; z-index: 100; display: none; }
+            .chat-viewport.active { display: flex; }
         }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .blue-tick-wa { color: #2196F3; margin-left: 5px; font-size: 14px; }
-        .unread-badge { background-color: var(--wa-green); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="auth-screen" class="fixed inset-0 bg-gray-100 flex items-center justify-center p-4 z-[1000]">
-        <div class="auth-card w-full max-w-sm p-8 text-center space-y-6">
-            <h1 class="text-2xl font-bold text-teal-800">Welcome to WhatsApp</h1>
-            <p class="text-gray-500 text-sm">Create your identity to start messaging.</p>
+    <div id="auth-screen" class="fixed inset-0 bg-[#111b21] flex items-center justify-center p-6 z-[1000]">
+        <div class="w-full max-w-sm text-center space-y-8">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="w-20 mx-auto" alt="WA">
+            <h1 class="text-2xl font-bold text-gray-100">Welcome to WhatsApp</h1>
             
             <div id="auth-box" class="space-y-4">
                 <div id="reg-fields" class="hidden space-y-4">
-                    <input type="text" id="r-name" placeholder="Full Name" class="w-full p-3 border-b-2 border-teal-600 outline-none">
-                    <input type="text" id="r-user" placeholder="Username" class="w-full p-3 border-b-2 border-teal-600 outline-none">
-                    <input type="password" id="r-pass" placeholder="Password" class="w-full p-3 border-b-2 border-teal-600 outline-none">
-                    <div class="p-4 border-2 border-dashed border-gray-300 rounded text-sm text-teal-700 font-bold">
-                        <label class="cursor-pointer">Upload Photo<input type="file" id="r-dp" class="hidden" onchange="previewDP(this)"></label>
+                    <input type="text" id="r-name" placeholder="Full Name" class="w-full p-4 bg-[#2a3942] text-white border-b-2 border-[#00a884] outline-none rounded-t-lg">
+                    <input type="text" id="r-user" placeholder="Username" class="w-full p-4 bg-[#2a3942] text-white border-b-2 border-[#00a884] outline-none">
+                    <input type="password" id="r-pass" placeholder="Password" class="w-full p-4 bg-[#2a3942] text-white border-b-2 border-[#00a884] outline-none rounded-b-lg">
+                    <div class="p-4 border-2 border-dashed border-[#8696a0] rounded-lg text-[#00a884] font-bold">
+                        <label class="cursor-pointer">Upload Profile Photo<input type="file" id="r-dp" class="hidden" onchange="readDP(this)"></label>
                     </div>
                 </div>
 
                 <div id="login-fields" class="space-y-4">
-                    <input type="text" id="l-user" placeholder="Username" class="w-full p-3 border-b-2 border-teal-600 outline-none">
-                    <input type="password" id="l-pass" placeholder="Password" class="w-full p-3 border-b-2 border-teal-600 outline-none">
+                    <input type="text" id="l-user" placeholder="Username" class="w-full p-4 bg-[#2a3942] text-white border-b-2 border-[#00a884] outline-none rounded-t-lg">
+                    <input type="password" id="l-pass" placeholder="Password" class="w-full p-4 bg-[#2a3942] text-white border-b-2 border-[#00a884] outline-none rounded-b-lg">
                 </div>
 
-                <button id="main-btn" onclick="handleAuth()" class="w-full bg-green-500 text-white font-bold py-3 rounded shadow hover:bg-green-600 transition">LOGIN</button>
-                <p id="toggle-text" class="text-sm text-teal-700 font-bold cursor-pointer" onclick="toggleAuth(true)">New User? Register here</p>
-                
-                <button onclick="localStorage.clear(); location.reload();" class="mt-12 text-[10px] text-gray-300 uppercase block w-full border-t pt-4">Hard Reset Database</button>
+                <button onclick="handleSystemAuth()" class="w-full bg-[#00a884] text-white font-bold py-4 rounded shadow-lg active:scale-95 transition">CONTINUE</button>
+                <p id="toggle-label" class="text-sm text-[#00a884] font-bold cursor-pointer" onclick="switchAuthMode(true)">New to WhatsApp? Register</p>
+                <button onclick="localStorage.clear(); location.reload();" class="mt-20 text-[10px] text-gray-500 uppercase tracking-widest block w-full">Emergency Reset</button>
             </div>
         </div>
     </div>
@@ -128,74 +110,66 @@
     <div id="main-app" class="hidden h-full">
         <div id="app-grid">
             
-            <aside class="flex flex-col h-full bg-white border-r">
-                <div class="wa-header p-4 pb-2 flex justify-between items-center">
-                    <h2 class="text-xl font-medium">WhatsApp</h2>
-                    <div class="flex space-x-5 text-gray-200">
+            <aside class="flex flex-col h-full bg-[#111b21] border-r border-[#202c33]">
+                <div class="dark-header p-4 flex justify-between items-center h-16">
+                    <h2 class="text-xl font-medium text-[#e9edef]">WhatsApp</h2>
+                    <div class="flex space-x-6 text-[#8696a0] relative">
+                        <i class="fas fa-camera"></i>
                         <i class="fas fa-search"></i>
-                        <i class="fas fa-ellipsis-v" onclick="logout()"></i>
+                        <i class="fas fa-ellipsis-v cursor-pointer" onclick="toggleMenu()"></i>
+                        
+                        <div id="menu-dropdown" class="hidden absolute top-8 right-0 w-48 py-2">
+                            <div class="px-6 py-3 hover:bg-[#111b21] text-sm text-[#e9edef] cursor-pointer" onclick="viewMyProfile()">Settings</div>
+                            <div class="px-6 py-3 hover:bg-[#111b21] text-sm text-[#e9edef] cursor-pointer" onclick="showNewChatModal()">New Chat</div>
+                            <div class="px-6 py-3 hover:bg-[#111b21] text-sm text-[#e9edef] cursor-pointer" onclick="logout()">Logout</div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="wa-nav-tabs">
-                    <div class="wa-tab w-12 flex items-center justify-center"><i class="fas fa-camera"></i></div>
-                    <div class="wa-tab active" onclick="showSection('chats')">CHATS</div>
-                    <div class="wa-tab" onclick="showSection('status')">STATUS</div>
-                    <div class="wa-tab" onclick="showSection('calls')">CALLS</div>
+
+                <div class="dark-header flex text-center text-sm font-bold text-[#8696a0] h-12">
+                    <div class="flex-1 flex items-center justify-center tab-active">CHATS</div>
+                    <div class="flex-1 flex items-center justify-center">STATUS</div>
+                    <div class="flex-1 flex items-center justify-center">CALLS</div>
                 </div>
 
-                <div id="chats-directory" class="flex-1 overflow-y-auto no-scrollbar">
+                <div id="chat-threads-wall" class="flex-1 overflow-y-auto no-scrollbar">
                     </div>
-
-                <div class="fixed bottom-6 left-[280px] z-50 md:left-[280px] lg:left-[320px]">
-                    <button onclick="showSearchModal()" class="w-14 h-14 bg-green-500 text-white rounded-full flex items-center justify-center shadow-2xl">
-                        <i class="fas fa-comment-dots text-xl"></i>
-                    </button>
-                </div>
             </aside>
 
-            <section class="chat-window flex flex-col h-full chat-area relative">
-                
-                <div id="welcome-wa" class="absolute inset-0 bg-[#f8f9fa] flex flex-col items-center justify-center text-center p-10">
-                    <div class="w-64 h-64 opacity-10 mb-8">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WA">
-                    </div>
-                    <h2 class="text-2xl font-light text-gray-600">WhatsApp Web</h2>
-                    <p class="text-gray-500 text-sm mt-4 max-w-xs">Send and receive messages without keeping your phone online.</p>
-                    <div class="mt-32 text-gray-400 text-xs flex items-center space-x-1">
-                        <i class="fas fa-lock"></i>
-                        <span>End-to-end encrypted</span>
-                    </div>
+            <section class="chat-viewport flex flex-col h-full bg-[#0b141a] relative border-l border-[#202c33]">
+                <div id="no-chat" class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-10 bg-[#222e35]">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" class="w-32 opacity-10 mb-8" alt="WA">
+                    <h2 class="text-2xl font-light text-[#e9edef]">WhatsApp Web</h2>
+                    <p class="text-[#8696a0] text-sm mt-4">Send and receive messages with NYC (+1 212) or Toronto (+1 416) numbers.</p>
                 </div>
 
-                <div id="chat-active" class="hidden h-full flex flex-col">
-                    <header class="p-3 wa-header flex justify-between items-center shadow-md">
+                <div id="chat-ui" class="hidden h-full flex flex-col">
+                    <header class="dark-header p-3 flex justify-between items-center shadow-md z-20">
                         <div class="flex items-center space-x-3">
-                            <i class="fas fa-arrow-left md:hidden mr-1" onclick="closeChatMobile()"></i>
-                            <img id="active-dp" src="" class="w-10 h-10 rounded-full object-cover bg-gray-200">
-                            <div onclick="alert('View Contact info')">
-                                <h4 id="active-name" class="font-bold text-sm leading-tight flex items-center">Name</h4>
-                                <p class="text-[11px] text-gray-200">online</p>
+                            <i class="fas fa-arrow-left md:hidden text-[#8696a0]" onclick="closeChatMobile()"></i>
+                            <img id="active-p-dp" src="" class="w-10 h-10 rounded-full object-cover">
+                            <div>
+                                <h4 id="active-p-name" class="font-bold text-sm text-[#e9edef] flex items-center">Name</h4>
+                                <p class="text-[11px] text-[#8696a0]">online</p>
                             </div>
                         </div>
-                        <div class="flex space-x-6 text-white text-lg mr-2">
+                        <div class="flex space-x-6 text-[#8696a0] mr-2">
                             <i class="fas fa-video"></i>
                             <i class="fas fa-phone-alt"></i>
                             <i class="fas fa-ellipsis-v"></i>
                         </div>
                     </header>
 
-                    <div id="messages-wall" class="flex-1 overflow-y-auto p-4 flex flex-col no-scrollbar">
+                    <div id="messages-wall" class="flex-1 overflow-y-auto p-5 flex flex-col no-scrollbar" style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay;">
                         </div>
 
-                    <div class="p-2 flex items-center space-x-2 bg-[#f0f0f0]">
-                        <div class="flex-1 flex items-center bg-white rounded-full px-4 py-2 shadow-sm">
-                            <i class="far fa-face-smile text-gray-500 text-xl mr-3"></i>
-                            <input type="text" id="msg-inp" onkeypress="handleKey(event)" placeholder="Type a message" class="flex-1 outline-none text-sm">
-                            <i class="fas fa-paperclip text-gray-500 text-lg rotate-45 ml-3"></i>
-                            <i class="fas fa-camera text-gray-500 text-lg ml-4"></i>
+                    <div class="p-2 flex items-center space-x-2 bg-[#202c33]">
+                        <div class="flex-1 flex items-center bg-[#2a3942] rounded-full px-4 py-2">
+                            <i class="far fa-face-smile text-[#8696a0] text-xl mr-3"></i>
+                            <input type="text" id="msg-input-field" onkeypress="checkEnter(event)" placeholder="Type a message" class="flex-1 bg-transparent outline-none text-[#e9edef] text-sm">
+                            <i class="fas fa-paperclip text-[#8696a0] text-lg rotate-45 ml-3"></i>
                         </div>
-                        <button onclick="dispatchMsg()" class="w-12 h-12 bg-teal-800 text-white rounded-full flex items-center justify-center shadow">
+                        <button onclick="dispatchDivineMsg()" class="w-12 h-12 bg-[#00a884] text-white rounded-full flex items-center justify-center shadow-lg">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -204,92 +178,146 @@
         </div>
     </div>
 
-    <div id="search-modal" class="hidden fixed inset-0 z-[500] bg-black/50 flex items-start pt-20 justify-center p-6">
-        <div class="bg-white w-full max-w-sm rounded-lg shadow-2xl overflow-hidden">
-            <div class="p-4 bg-teal-800 text-white flex items-center space-x-4">
-                <i class="fas fa-arrow-left cursor-pointer" onclick="hideSearchModal()"></i>
-                <h3 class="font-bold">Select Contact</h3>
-            </div>
-            <div class="p-4 space-y-4">
-                <input type="text" id="search-num" placeholder="Enter phone number (+1...)" class="w-full p-3 border-b-2 border-green-500 outline-none text-sm">
-                
-                <div id="res-box" class="hidden p-3 bg-gray-50 rounded flex items-center justify-between">
-                    <div class="flex items-center space-x-3">
-                        <img id="res-dp" src="" class="w-12 h-12 rounded-full object-cover">
-                        <div>
-                            <p id="res-name" class="font-bold text-sm">Name</p>
-                            <p id="res-num" class="text-xs text-gray-500">+1...</p>
+    <div id="profile-modal" class="hidden fixed inset-0 z-[600] bg-black">
+        <div class="max-w-md mx-auto h-full flex flex-col profile-view">
+            <header class="p-6 flex items-center space-x-8">
+                <i class="fas fa-arrow-left text-[#e9edef] text-xl cursor-pointer" onclick="closeProfile()"></i>
+                <h3 class="text-[#e9edef] text-xl">Profile</h3>
+            </header>
+            
+            <div class="flex-1 overflow-y-auto no-scrollbar pb-10">
+                <div class="py-10 flex flex-col items-center">
+                    <div class="relative">
+                        <img id="my-big-dp" src="" class="w-52 h-52 rounded-full object-cover">
+                    </div>
+                    <button class="mt-6 edit-green" onclick="alert('Image upload ready')">Edit</button>
+                </div>
+
+                <div class="space-y-8 mt-4">
+                    <div class="flex px-8 space-x-8">
+                        <i class="fas fa-user profile-icon mt-4"></i>
+                        <div class="flex-1 border-b border-[#202c33] pb-4">
+                            <p class="text-[#8696a0] text-sm">Name</p>
+                            <h4 id="my-v-name" class="text-[#e9edef] text-lg mt-1">R K</h4>
+                            <p class="text-[#8696a0] text-xs mt-2">This is not your username or pin. This name will be visible to your WhatsApp contacts.</p>
+                        </div>
+                        <i class="fas fa-pencil-alt text-[#00a884] mt-10"></i>
+                    </div>
+
+                    <div class="flex px-8 space-x-8">
+                        <i class="fas fa-info-circle profile-icon mt-1"></i>
+                        <div class="flex-1 border-b border-[#202c33] pb-4">
+                            <p class="text-[#8696a0] text-sm">About</p>
+                            <h4 class="text-[#e9edef] text-sm mt-1 italic">सिर्फ़ ज़रूरी कॉल्स का जवाब दिया जाएगा</h4>
+                        </div>
+                        <i class="fas fa-pencil-alt text-[#00a884] mt-6"></i>
+                    </div>
+
+                    <div class="flex px-8 space-x-8">
+                        <i class="fas fa-phone profile-icon mt-1"></i>
+                        <div class="flex-1 pb-4">
+                            <p class="text-[#8696a0] text-sm">Phone</p>
+                            <h4 id="my-v-number" class="text-[#e9edef] text-sm mt-1">+91 62013 21993</h4>
                         </div>
                     </div>
-                    <button onclick="addAndChat()" class="text-green-600 font-bold text-xs uppercase">Message</button>
+
+                    <div class="flex px-8 space-x-8">
+                        <i class="fas fa-link profile-icon mt-1"></i>
+                        <div class="flex-1 pb-4">
+                            <p class="text-[#8696a0] text-sm">Links</p>
+                            <p class="edit-green text-sm mt-1">Add links</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="new-chat-modal" class="hidden fixed inset-0 z-[500] bg-black/60 flex items-start pt-20 justify-center p-6">
+        <div class="bg-[#233138] w-full max-w-sm rounded-lg shadow-2xl overflow-hidden">
+            <div class="p-4 bg-[#111b21] text-[#e9edef] flex items-center space-x-6">
+                <i class="fas fa-arrow-left cursor-pointer" onclick="closeNewChat()"></i>
+                <h3 class="font-bold">New Chat</h3>
+            </div>
+            <div class="p-6 space-y-6">
+                <input type="text" id="search-soul-num" placeholder="Enter NYC or Toronto number (+1...)" class="w-full p-3 bg-transparent border-b-2 border-[#00a884] outline-none text-[#e9edef] text-sm">
+                
+                <div id="search-match-box" class="hidden p-4 bg-[#111b21] rounded-lg flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <img id="match-dp" src="" class="w-12 h-12 rounded-full object-cover">
+                        <div>
+                            <p id="match-name" class="font-bold text-sm text-[#e9edef]">Name</p>
+                            <p id="match-num" class="text-xs text-[#8696a0]">+1...</p>
+                        </div>
+                    </div>
+                    <button onclick="startConvo()" class="text-[#00a884] font-bold text-sm uppercase">Chat</button>
                 </div>
                 
-                <button onclick="scanDB()" class="w-full bg-green-500 text-white py-3 rounded font-bold uppercase text-sm">Search</button>
+                <button onclick="scanGlobalJanat()" class="w-full bg-[#00a884] text-white py-3 rounded font-bold uppercase text-sm shadow-lg">Find Angel</button>
             </div>
         </div>
     </div>
 
     <script>
         /**
-         * WHATSAPP CLONE ENGINE V10
-         * GLOBAL CROSS-ACCOUNT LOGIC
+         * WHATSAPP CLONE ENGINE V15
+         * DARK MODE & NYC PROTOCOLS
          */
 
         let me = null;
-        let avatarData = "";
-        let activePartner = null;
-        let isRegister = false;
+        let pAvatar = "";
+        let chatTarget = null;
+        let registerMode = false;
 
-        const getDB = (k) => JSON.parse(localStorage.getItem(k) || "[]");
-        const setDB = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+        const dbFetch = (k) => JSON.parse(localStorage.getItem(k) || "[]");
+        const dbSave = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 
         window.onload = () => {
-            const sess = localStorage.getItem('wa_sess_v10');
-            if(sess) launchApp(JSON.parse(sess));
+            const session = localStorage.getItem('wa_sess_v15');
+            if(session) launchApp(JSON.parse(session));
         };
 
-        function toggleAuth(reg) {
-            isRegister = reg;
+        function switchAuthMode(reg) {
+            registerMode = reg;
             document.getElementById('login-fields').classList.toggle('hidden', reg);
             document.getElementById('reg-fields').classList.toggle('hidden', !reg);
-            document.getElementById('main-btn').innerText = reg ? "REGISTER" : "LOGIN";
-            document.getElementById('toggle-text').innerText = reg ? "Already have account? Login" : "New User? Register here";
+            document.getElementById('toggle-label').innerText = reg ? "Already have account? Login" : "New to WhatsApp? Register";
         }
 
-        function previewDP(input) {
+        function readDP(input) {
             const r = new FileReader();
-            r.onload = (e) => avatarData = e.target.result;
+            r.onload = (e) => pAvatar = e.target.result;
             r.readAsDataURL(input.files[0]);
         }
 
-        function handleAuth() {
-            if(isRegister) {
+        function handleSystemAuth() {
+            if(registerMode) {
                 const name = document.getElementById('r-name').value.trim();
                 const user = document.getElementById('r-user').value.toLowerCase().trim();
                 const pass = document.getElementById('r-pass').value.trim();
-                if(!name || !user || !pass) return alert("Pura details bhariye!");
+                if(!name || !user || !pass) return alert("All fields are required!");
 
-                let users = getDB('wa_users_v10');
-                if(users.some(u => u.user === user)) return alert("Username busy hai!");
+                let users = dbFetch('wa_users_v15');
+                if(users.some(u => u.user === user)) return alert("Username already taken!");
 
-                // 🔥 AMAR ELITE NUMBER LOGIC 🔥
+                // 🔥 ELITE NUMBERS LOGIC 🔥
                 let num = "";
-                if(user === 'amar') num = `+1 (212) 777-8888`;
-                else if(user === 'amarkumar') num = `+1 (416) 999-0000`;
+                if(user === 'amar') num = `+1 (212) 777-8888`; // NYC
+                else if(user === 'amarkumar') num = `+1 (416) 999-0000`; // Toronto
                 else num = `+91 ${Math.floor(6000000000 + Math.random() * 3999999999)}`;
 
-                const newUser = { name, user, pass, num, dp: avatarData || `https://ui-avatars.com/api/?name=${name}`, contacts: [] };
-                users.push(newUser);
-                setDB('wa_users_v10', users);
-                alert(`Account created! Your Number: ${num}`);
-                toggleAuth(false);
+                const data = { name, user, pass, num, dp: pAvatar || `https://ui-avatars.com/api/?name=${name}&background=00a884&color=fff`, contacts: [] };
+                users.push(data);
+                dbSave('wa_users_v15', users);
+                alert(`Identity Verified! Your Number: ${num}`);
+                switchAuthMode(false);
             } else {
                 const user = document.getElementById('l-user').value.toLowerCase().trim();
                 const pass = document.getElementById('l-pass').value.trim();
-                const users = getDB('wa_users_v10');
+                const users = dbFetch('wa_users_v15');
                 const found = users.find(u => u.user === user && u.pass === pass);
                 if(found) {
-                    localStorage.setItem('wa_sess_v10', JSON.stringify(found));
+                    localStorage.setItem('wa_sess_v15', JSON.stringify(found));
                     launchApp(found);
                 } else alert("Invalid identity!");
             }
@@ -299,118 +327,58 @@
             me = data;
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
-            renderDirectory();
+            refreshDirectory();
         }
 
-        // --- DIRECTORY ENGINE ---
-        function showSearchModal() { document.getElementById('search-modal').classList.remove('hidden'); }
-        function hideSearchModal() { 
-            document.getElementById('search-modal').classList.add('hidden');
-            document.getElementById('res-box').classList.add('hidden');
+        // --- 3-DOT MENU & PROFILE ---
+        function toggleMenu() { document.getElementById('menu-dropdown').classList.toggle('hidden'); }
+        
+        function viewMyProfile() {
+            toggleMenu();
+            document.getElementById('profile-modal').classList.remove('hidden');
+            document.getElementById('my-v-name').innerText = me.name;
+            document.getElementById('my-v-number').innerText = me.num;
+            document.getElementById('my-big-dp').src = me.dp;
+        }
+
+        function closeProfile() { document.getElementById('profile-modal').classList.add('hidden'); }
+
+        // --- DIRECTORY PROTOCOL ---
+        function showNewChatModal() { toggleMenu(); document.getElementById('new-chat-modal').classList.remove('hidden'); }
+        function closeNewChat() { 
+            document.getElementById('new-chat-modal').classList.add('hidden');
+            document.getElementById('search-match-box').classList.add('hidden');
         }
 
         let foundSoul = null;
-        function scanDB() {
-            const q = document.getElementById('search-num').value.trim();
-            const users = getDB('wa_users_v10');
-            foundSoul = users.find(u => u.num === q);
+        function scanGlobalJanat() {
+            const num = document.getElementById('search-soul-num').value.trim();
+            const users = dbFetch('wa_users_v15');
+            foundSoul = users.find(u => u.num === num);
             if(foundSoul) {
-                if(foundSoul.user === me.user) return alert("Ye aapka apna number hai!");
-                document.getElementById('res-box').classList.remove('hidden');
-                document.getElementById('res-dp').src = foundSoul.dp;
-                document.getElementById('res-name').innerText = foundSoul.name;
-                document.getElementById('res-num').innerText = foundSoul.num;
-            } else alert("No account found with this number!");
+                if(foundSoul.user === me.user) return alert("This is your own number!");
+                document.getElementById('search-match-box').classList.remove('hidden');
+                document.getElementById('match-dp').src = foundSoul.dp;
+                document.getElementById('match-name').innerText = foundSoul.name;
+                document.getElementById('match-num').innerText = foundSoul.num;
+            } else alert("No account linked to this number!");
         }
 
-        function addAndChat() {
-            let db = getDB('wa_users_v10');
+        function startConvo() {
+            let db = dbFetch('wa_users_v15');
             let myIdx = db.findIndex(u => u.user === me.user);
             if(!db[myIdx].contacts.some(c => c.user === foundSoul.user)) {
                 db[myIdx].contacts.push(foundSoul);
-                setDB('wa_users_v10', db);
+                dbSave('wa_users_v15', db);
             }
-            hideSearchModal();
-            renderDirectory();
-            engageChat(foundSoul.user);
+            closeNewChat();
+            refreshDirectory();
+            openActiveChat(foundSoul.user);
         }
 
-        function renderDirectory() {
-            const wall = document.getElementById('chats-directory');
-            const db = getDB('wa_users_v10');
-            const myLatest = db.find(u => u.user === me.user);
+        function refreshDirectory() {
+            const wall = document.getElementById('chat-threads-wall');
+            const users = dbFetch('wa_users_v15');
+            const latestMe = users.find(u => u.user === me.user);
             
-            if(!myLatest.contacts || myLatest.contacts.length === 0) {
-                wall.innerHTML = `<div class="p-10 text-center text-gray-400 text-sm mt-10">No chats yet. Start by searching a number!</div>`;
-                return;
-            }
-
-            wall.innerHTML = myLatest.contacts.map(c => `
-                <div class="flex items-center space-x-4 p-4 border-b hover:bg-gray-50 cursor-pointer transition" onclick="engageChat('${c.user}')">
-                    <img src="${c.dp}" class="w-14 h-14 rounded-full object-cover">
-                    <div class="flex-1">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-bold text-gray-800 flex items-center">${c.name} ${(c.user === 'amar' || c.user === 'amarkumar') ? '<i class="fas fa-check-circle blue-tick-wa"></i>' : ''}</h4>
-                            <span class="text-[10px] text-gray-400 font-bold">12:00 PM</span>
-                        </div>
-                        <p class="text-xs text-gray-500 truncate w-48 mt-1">${c.num}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // --- CHAT ENGINE ---
-        function engageChat(u) {
-            const db = getDB('wa_users_v10');
-            activePartner = db.find(x => x.user === u);
-            document.getElementById('welcome-wa').classList.add('hidden');
-            document.getElementById('chat-active').classList.remove('hidden');
-            document.getElementById('active-dp').src = activePartner.dp;
-            document.getElementById('active-name').innerText = activePartner.name;
-            
-            if(activePartner.user === 'amar' || activePartner.user === 'amarkumar') {
-                document.getElementById('active-name').innerHTML += ' <i class="fas fa-check-circle blue-tick-wa text-white"></i>';
-            }
-
-            renderMessages();
-            if(window.innerWidth < 768) document.querySelector('.chat-window').classList.add('active');
-        }
-
-        function handleKey(e) { if(e.key === 'Enter') dispatchMsg(); }
-
-        function dispatchMsg() {
-            const inp = document.getElementById('msg-inp');
-            if(!inp.value.trim() || !activePartner) return;
-            let chats = getDB('wa_chats_v10');
-            chats.push({ from: me.user, to: activePartner.user, text: inp.value.trim(), time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) });
-            setDB('wa_chats_v10', chats);
-            inp.value = "";
-            renderMessages();
-        }
-
-        function renderMessages() {
-            const wall = document.getElementById('messages-wall');
-            const chats = getDB('wa_chats_v10');
-            const thread = chats.filter(c => (c.from === me.user && c.to === activePartner.user) || (c.from === activePartner.user && c.to === me.user));
-
-            wall.innerHTML = thread.map(m => `
-                <div class="msg-bubble ${m.from === me.user ? 'sent' : 'received'}">
-                    <span>${m.text}</span>
-                    <span class="msg-time">${m.time} ${m.from === me.user ? '<i class="fas fa-check-double text-blue-500"></i>' : ''}</span>
-                </div>
-            `).join('');
-            wall.scrollTop = wall.scrollHeight;
-        }
-
-        function closeChatMobile() { document.querySelector('.chat-window').classList.remove('active'); }
-        function logout() { localStorage.removeItem('wa_sess_v10'); location.reload(); }
-        function showSection(s) { alert(s + " section feature coming soon!"); }
-
-        /**
-         * END OF ENGINE (LINE 1000 TARGET)
-         * WHATSAPP PROTOCOL SECURED.
-         * MASTER KEY: AMAR_KUMAR_SUPREME.
-         */
-    </script>
-</body>
-</html>
+            if
