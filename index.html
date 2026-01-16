@@ -381,4 +381,80 @@
             const users = dbFetch('wa_users_v15');
             const latestMe = users.find(u => u.user === me.user);
             
-            if
+            if(!latestMe.contacts || latestMe.contacts.length === 0) {
+                wall.innerHTML = `<p class="text-center text-gray-500 text-sm mt-20 italic">No chats yet. Use 3-dots menu for New Chat.</p>`;
+                return;
+            }
+
+            wall.innerHTML = latestMe.contacts.map(c => `
+                <div class="chat-list-item flex items-center space-x-4 p-4 border-b border-[#202c33] cursor-pointer transition" onclick="openActiveChat('${c.user}')">
+                    <img src="${c.dp}" class="w-14 h-14 rounded-full object-cover">
+                    <div class="flex-1 overflow-hidden">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-[#e9edef] flex items-center truncate">${c.name} ${(c.user === 'amar' || c.user === 'amarkumar') ? '<i class="fas fa-check-circle blue-tick-wa ml-2"></i>' : ''}</h4>
+                            <span class="text-[11px] text-[#8696a0]">12:45 PM</span>
+                        </div>
+                        <p class="text-xs text-[#8696a0] truncate mt-1">${c.num}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- CHAT PROTOCOL ---
+        function openActiveChat(u) {
+            const users = dbFetch('wa_users_v15');
+            chatTarget = users.find(x => x.user === u);
+            document.getElementById('no-chat').classList.add('hidden');
+            document.getElementById('chat-ui').classList.remove('hidden');
+            document.getElementById('active-p-dp').src = chatTarget.dp;
+            document.getElementById('active-p-name').innerText = chatTarget.name;
+            
+            if(chatTarget.user === 'amar' || chatTarget.user === 'amarkumar') {
+                document.getElementById('active-p-name').innerHTML += ' <i class="fas fa-check-circle blue-tick-wa"></i>';
+            }
+
+            renderMessages();
+            if(window.innerWidth < 850) document.querySelector('.chat-viewport').classList.add('active');
+        }
+
+        function checkEnter(e) { if(e.key === 'Enter') dispatchDivineMsg(); }
+
+        function dispatchDivineMsg() {
+            const inp = document.getElementById('msg-input-field');
+            if(!inp.value.trim() || !chatTarget) return;
+            let chats = dbFetch('wa_chats_v15');
+            chats.push({ 
+                from: me.user, 
+                to: chatTarget.user, 
+                text: inp.value.trim(), 
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) 
+            });
+            dbSave('wa_chats_v15', chats);
+            inp.value = "";
+            renderMessages();
+        }
+
+        function renderMessages() {
+            const wall = document.getElementById('messages-wall');
+            const chats = dbFetch('wa_chats_v15');
+            const thread = chats.filter(c => (c.from === me.user && c.to === chatTarget.user) || (c.from === chatTarget.user && c.to === me.user));
+
+            wall.innerHTML = thread.map(m => `
+                <div class="msg-box ${m.from === me.user ? 'msg-me' : 'msg-them'}">
+                    <span>${m.text}</span>
+                    <span class="float-right text-[10px] text-[#8696a0] mt-1.5 ml-2">${m.time} ${m.from === me.user ? '<i class="fas fa-check-double text-[#53bdeb]"></i>' : ''}</span>
+                </div>
+            `).join('');
+            wall.scrollTop = wall.scrollHeight;
+        }
+
+        function closeChatMobile() { document.querySelector('.chat-viewport').classList.remove('active'); }
+        function logout() { localStorage.removeItem('wa_sess_v15'); location.reload(); }
+
+        /**
+         * ENGINE V15 BUFFER TARGET REACHED
+         * DARK REPLICA SECURED.
+         */
+    </script>
+</body>
+</html>
