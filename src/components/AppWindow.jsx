@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { motion, PanInfo } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import { X, ChevronDown } from 'lucide-react';
 
-const AppWindow = ({ app, onClose, onSwipeUp }) => {
-  const [dragY, setDragY] = useState(0);
+const AppWindow = ({ app, onClose }) => {
   const [isClosing, setIsClosing] = useState(false);
+  const [dragY, setDragY] = useState(0);
 
   const handleDragEnd = (event, info) => {
     if (info.offset.y > 100) {
@@ -29,7 +29,6 @@ const AppWindow = ({ app, onClose, onSwipeUp }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
     >
-      {/* Swipe Indicator */}
       <motion.div
         className="absolute top-2 left-1/2 transform -translate-x-1/2 z-50"
         animate={{ y: dragY > 0 ? dragY : 0 }}
@@ -37,7 +36,6 @@ const AppWindow = ({ app, onClose, onSwipeUp }) => {
         <ChevronDown className="w-8 h-8 text-white/70" />
       </motion.div>
 
-      {/* App Window */}
       <motion.div
         className="absolute inset-0 bg-white rounded-t-3xl overflow-hidden"
         drag="y"
@@ -49,7 +47,6 @@ const AppWindow = ({ app, onClose, onSwipeUp }) => {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         style={{ cursor: 'grab' }}
       >
-        {/* App Header */}
         <div className="relative h-12 flex items-center justify-center bg-white border-b">
           <div className="flex-1 text-center">
             <span className="font-semibold">{app.name}</span>
@@ -65,12 +62,10 @@ const AppWindow = ({ app, onClose, onSwipeUp }) => {
           </button>
         </div>
 
-        {/* App Content */}
         <div className="h-[calc(100%-3rem)] overflow-auto">
           <AppComponent />
         </div>
 
-        {/* Home Indicator for Mobile */}
         <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-36 h-1 bg-gray-300 rounded-full" />
       </motion.div>
     </motion.div>
