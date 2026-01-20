@@ -468,4 +468,134 @@ const Dashboard = () => {
                   <div className="text-center mb-8">
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-full">
                       <ShieldCheckIcon className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-                      <span className="text-sm text-indigo-700 dar
+                      <span className="text-sm text-indigo-700 dark:text-indigo-300">
+                        Messages are end-to-end encrypted. No one outside of this chat can read them.
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Messages */}
+                  {messages.map(msg => (
+                    <MessageBubble
+                      key={msg.id}
+                      message={msg}
+                      isOwn={msg.sender === 'me'}
+                      contact={selectedContact}
+                    />
+                  ))}
+
+                  {/* Typing Indicator */}
+                  {isTyping && (
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white">
+                        {selectedContact.avatar}
+                      </div>
+                      <div className="bg-gray-200 dark:bg-gray-700 rounded-2xl rounded-tl-none px-4 py-3">
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Message Input */}
+              <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
+                <div className="max-w-3xl mx-auto">
+                  <div className="flex items-center gap-3">
+                    {/* Attachment Button */}
+                    <button className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
+                      <PaperClipIcon className="h-5 w-5" />
+                    </button>
+
+                    {/* Camera Button */}
+                    <button className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600">
+                      <CameraIcon className="h-5 w-5" />
+                    </button>
+
+                    {/* Message Input */}
+                    <div className="flex-1 relative">
+                      <textarea
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        placeholder="Type your message here..."
+                        className="input-field resize-none py-3 pr-24"
+                        rows="1"
+                      />
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+                        {/* Emoji Button */}
+                        <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
+                          <FaceSmileIcon className="h-5 w-5" />
+                        </button>
+
+                        {/* Voice Message */}
+                        <button className="p-2 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400">
+                          <MicrophoneIcon className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Send Button */}
+                    <button
+                      onClick={handleSendMessage}
+                      disabled={!message.trim()}
+                      className={`p-3 rounded-full ${
+                        message.trim()
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700'
+                          : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      <PaperAirplaneIcon className="h-5 w-5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            /* Welcome Screen when no chat selected */
+            <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-8">
+              <div className="max-w-md text-center">
+                <div className="w-24 h-24 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-3xl flex items-center justify-center mx-auto mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center">
+                    <span className="text-white text-2xl font-bold">S</span>
+                  </div>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                  Welcome to Swarg Messenger
+                </h2>
+                <p className="text-gray-600 dark:text-gray-300 mb-8">
+                  Select a contact from the list to start chatting, or create a new chat to begin your secure conversation.
+                </p>
+                <button
+                  onClick={handleAddContact}
+                  className="btn-primary inline-flex items-center gap-2"
+                >
+                  <PencilSquareIcon className="h-5 w-5" />
+                  Start New Chat
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Encryption Status Bar */}
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 text-sm flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <ShieldCheckIcon className="h-4 w-4" />
+          <span>All messages and calls are end-to-end encrypted with AES-256</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <span className="online-indicator bg-white"></span>
+          <span>Connected • {onlineContacts} contacts online</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
