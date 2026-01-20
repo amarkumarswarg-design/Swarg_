@@ -18,17 +18,7 @@ module.exports = {
           '100%': { transform: 'translateY(0)' },
         }
       },
-      backdropFilter: {
-        'none': 'none',
-        'blur': 'blur(20px)',
-      },
-      boxShadow: {
-        'ios': '0 4px 30px rgba(0, 0, 0, 0.1)',
-        'ios-dark': '0 4px 30px rgba(0, 0, 0, 0.3)',
-      }
     },
   },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
+  plugins: [],
 }
