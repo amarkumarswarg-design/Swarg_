@@ -1,0 +1,202 @@
+// client/src/components/common/Navbar.jsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  MagnifyingGlassIcon,
+  BellIcon,
+  Cog6ToothIcon,
+  SunIcon,
+  MoonIcon,
+  QuestionMarkCircleIcon,
+  VideoCameraIcon,
+  PhoneIcon,
+  UserPlusIcon
+} from '@heroicons/react/24/outline';
+import { toast } from 'react-hot-toast';
+
+const Navbar = ({ toggleTheme }) => {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [notifications] = useState([
+    { id: 1, text: 'Rajesh sent you a message', time: '2 min ago', read: false },
+    { id: 2, text: 'Priya started a video call', time: '10 min ago', read: true },
+    { id: 3, text: 'Amit added you to a group', time: '1 hour ago', read: false },
+  ]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [theme, setTheme] = useState(localStorage.getItem('swarg_theme') || 'light');
+
+  const unreadNotifications = notifications.filter(n => !n.read).length;
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    // Implement search functionality here
+  };
+
+  const handleThemeToggle = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    toggleTheme();
+  };
+
+  const handleStartCall = (type) => {
+    toast.success(`Starting ${type} call...`);
+    // Implement call functionality here
+  };
+
+  return (
+    <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-3">
+      <div className="flex items-center justify-between">
+        {/* Left Section */}
+        <div className="flex items-center gap-8">
+          {/* Search Bar */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search messages, contacts..."
+              className="input-field pl-10 w-64 lg:w-80"
+              value={searchQuery}
+              onChange={handleSearch}
+            />
+          </div>
+
+          {/* Quick Actions */}
+          <div className="hidden lg:flex items-center gap-4">
+            <button
+              onClick={() => handleStartCall('voice')}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
+              <PhoneIcon className="h-5 w-5" />
+              <span>New Call</span>
+            </button>
+            <button
+              onClick={() => handleStartCall('video')}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-colors"
+            >
+              <VideoCameraIcon className="h-5 w-5" />
+              <span>Video Call</span>
+            </button>
+            <button
+              onClick={() => navigate('/contacts/new')}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
+            >
+              <UserPlusIcon className="h-5 w-5" />
+              <span>Add Contact</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Right Section */}
+        <div className="flex items-center gap-4">
+          {/* Theme Toggle */}
+          <button
+            onClick={handleThemeToggle}
+            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'light' ? (
+              <MoonIcon className="h-5 w-5" />
+            ) : (
+              <SunIcon className="h-5 w-5" />
+            )}
+          </button>
+
+          {/* Help */}
+          <button
+            onClick={() => toast.info('Help center coming soon!')}
+            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            aria-label="Help"
+          >
+            <QuestionMarkCircleIcon className="h-5 w-5" />
+          </button>
+
+          {/* Notifications */}
+          <div className="relative">
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors relative"
+              aria-label="Notifications"
+            >
+              <BellIcon className="h-5 w-5" />
+              {unreadNotifications > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadNotifications}
+                </span>
+              )}
+            </button>
+
+            {/* Notifications Dropdown */}
+            {showNotifications && (
+              <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 py-2 z-50">
+                <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="font-semibold text-gray-900 dark:text-white">Notifications</h3>
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map(notification => (
+                      <div
+                        key={notification.id}
+                        className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${
+                          !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
+                        }`}
+                      >
+                        <p className="text-sm text-gray-900 dark:text-white">
+                          {notification.text}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {notification.time}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-4 py-8 text-center">
+                      <p className="text-gray-500 dark:text-gray-400">No notifications</p>
+                    </div>
+                  )}
+                </div>
+                <div className="px-4 py-2 border-t border-gray-200 dark:border-gray-700">
+                  <button
+                    onClick={() => {
+                      toast.success('All notifications marked as read');
+                      setShowNotifications(false);
+                    }}
+                    className="text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+                  >
+                    Mark all as read
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Settings */}
+          <button
+            onClick={() => navigate('/settings')}
+            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            aria-label="Settings"
+          >
+            <Cog6ToothIcon className="h-5 w-5" />
+          </button>
+
+          {/* User Profile */}
+          <div className="flex items-center gap-3">
+            <div className="text-right hidden lg:block">
+              <p className="font-medium text-gray-900 dark:text-white">Amar Kumar</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">@amar</p>
+            </div>
+            <div 
+              className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold cursor-pointer"
+              onClick={() => navigate('/profile')}
+            >
+              A
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Navbar;
