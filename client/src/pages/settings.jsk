@@ -512,4 +512,576 @@ const Settings = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium text-gray-900
+                        <h3 className="font-medium text-gray-900 dark:text-white">Read Receipts</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Send read receipts when you view messages</p>
+                      </div>
+                      <button
+                        onClick={() => handlePrivacyChange('readReceipts', !privacySettings.readReceipts)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full ${
+                          privacySettings.readReceipts ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-gray-600'
+                        }`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                          privacySettings.readReceipts ? 'translate-x-6' : 'translate-x-1'
+                        }`} />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-white">Typing Indicator</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Show when you're typing</p>
+                      </div>
+                      <button
+                        onClick={() => handlePrivacyChange('typingIndicator', !privacySettings.typingIndicator)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full ${
+                          privacySettings.typingIndicator ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-gray-600'
+                        }`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                          privacySettings.typingIndicator ? 'translate-x-6' : 'translate-x-1'
+                        }`} />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-white">Online Status</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Show when you're online</p>
+                      </div>
+                      <button
+                        onClick={() => handlePrivacyChange('onlineStatus', !privacySettings.onlineStatus)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full ${
+                          privacySettings.onlineStatus ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-gray-600'
+                        }`}
+                      >
+                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                          privacySettings.onlineStatus ? 'translate-x-6' : 'translate-x-1'
+                        }`} />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Blocked Contacts */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-3">Blocked Contacts</h3>
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                      <p className="text-gray-600 dark:text-gray-400 text-center">
+                        You haven't blocked any contacts yet.
+                      </p>
+                      <button className="btn-secondary w-full mt-3">
+                        Manage Blocked Contacts
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Notifications Tab */}
+            {activeTab === 'notifications' && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Notification Settings</h2>
+                
+                <div className="space-y-6">
+                  {/* Sound Settings */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">Sound & Vibration</h3>
+                    <div className="space-y-4">
+                      {[
+                        { key: 'messageSound', label: 'Message Sound', description: 'Play sound for new messages' },
+                        { key: 'callSound', label: 'Call Sound', description: 'Play sound for incoming calls' },
+                        { key: 'vibration', label: 'Vibration', description: 'Vibrate for notifications' },
+                        { key: 'preview', label: 'Message Preview', description: 'Show message content in notifications' },
+                        { key: 'groupNotifications', label: 'Group Notifications', description: 'Receive notifications from groups' },
+                        { key: 'silentMode', label: 'Silent Mode', description: 'Mute all notifications' }
+                      ].map((item) => (
+                        <div key={item.key} className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium text-gray-900 dark:text-white">{item.label}</h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                          </div>
+                          <button
+                            onClick={() => handleNotificationChange(item.key, !notificationSettings[item.key])}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full ${
+                              notificationSettings[item.key] ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-gray-600'
+                            }`}
+                          >
+                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                              notificationSettings[item.key] ? 'translate-x-6' : 'translate-x-1'
+                            }`} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Notification Tone */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-3">Notification Tone</h3>
+                    <select className="input-field w-full">
+                      <option>Default (Swarg Tone)</option>
+                      <option>Gentle Bell</option>
+                      <option>Modern Alert</option>
+                      <option>Classic Ding</option>
+                      <option>Custom Tone</option>
+                    </select>
+                  </div>
+
+                  {/* Do Not Disturb */}
+                  <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-white">Do Not Disturb</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Mute notifications during specified hours</p>
+                      </div>
+                      <button className="btn-secondary">
+                        Configure
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Security Tab */}
+            {activeTab === 'security' && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Security Settings</h2>
+                
+                <div className="space-y-8">
+                  {/* Change Password */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">Change Password</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Current Password
+                        </label>
+                        <div className="relative">
+                          <input
+                            type={showPasswords.current ? "text" : "password"}
+                            value={passwordData.currentPassword}
+                            onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
+                            className="input-field pr-10"
+                          />
+                          <button
+                            onClick={() => setShowPasswords(prev => ({ ...prev, current: !prev.current }))}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          >
+                            {showPasswords.current ? (
+                              <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                            ) : (
+                              <EyeIcon className="h-5 w-5 text-gray-400" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          New Password
+                        </label>
+                        <div className="relative">
+                          <input
+                            type={showPasswords.new ? "text" : "password"}
+                            value={passwordData.newPassword}
+                            onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                            className="input-field pr-10"
+                          />
+                          <button
+                            onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          >
+                            {showPasswords.new ? (
+                              <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                            ) : (
+                              <EyeIcon className="h-5 w-5 text-gray-400" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Confirm New Password
+                        </label>
+                        <div className="relative">
+                          <input
+                            type={showPasswords.confirm ? "text" : "password"}
+                            value={passwordData.confirmPassword}
+                            onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                            className="input-field pr-10"
+                          />
+                          <button
+                            onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
+                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                          >
+                            {showPasswords.confirm ? (
+                              <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                            ) : (
+                              <EyeIcon className="h-5 w-5 text-gray-400" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="flex items-end">
+                        <button
+                          onClick={handlePasswordChange}
+                          className="btn-primary"
+                        >
+                          Change Password
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Two-Factor Authentication */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">Two-Factor Authentication</h3>
+                    <div className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-lg">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          {securitySettings.twoFactorAuth ? (
+                            <>
+                              <CheckCircleIcon className="h-5 w-5 text-green-500" />
+                              <span className="font-medium text-green-600 dark:text-green-400">Enabled</span>
+                            </>
+                          ) : (
+                            <>
+                              <XCircleIcon className="h-5 w-5 text-gray-400" />
+                              <span className="font-medium text-gray-600 dark:text-gray-400">Disabled</span>
+                            </>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Add an extra layer of security to your account
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => handleSecurityChange('twoFactorAuth', !securitySettings.twoFactorAuth)}
+                        className={`px-4 py-2 rounded-lg font-medium ${
+                          securitySettings.twoFactorAuth
+                            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                            : 'btn-primary'
+                        }`}
+                      >
+                        {securitySettings.twoFactorAuth ? 'Disable' : 'Enable'}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Security Options */}
+                  <div className="space-y-4">
+                    <h3 className="font-medium text-gray-900 dark:text-white">Security Options</h3>
+                    {[
+                      { key: 'loginAlerts', label: 'Login Alerts', description: 'Get notified about new logins' },
+                      { key: 'encryptionInfo', label: 'Show Encryption Info', description: 'Display encryption status in chats' }
+                    ].map((item) => (
+                      <div key={item.key} className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium text-gray-900 dark:text-white">{item.label}</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
+                        </div>
+                        <button
+                          onClick={() => handleSecurityChange(item.key, !securitySettings[item.key])}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full ${
+                            securitySettings[item.key] ? 'bg-indigo-600' : 'bg-gray-300 dark:bg-gray-600'
+                          }`}
+                        >
+                          <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
+                            securitySettings[item.key] ? 'translate-x-6' : 'translate-x-1'
+                          }`} />
+                        </button>
+                      </div>
+                    ))}
+
+                    {/* Auto Lock */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium text-gray-900 dark:text-white">Auto Lock</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Lock app after inactivity</p>
+                      </div>
+                      <select
+                        value={securitySettings.autoLock}
+                        onChange={(e) => handleSecurityChange('autoLock', e.target.value)}
+                        className="input-field w-48"
+                      >
+                        <option value="immediate">Immediately</option>
+                        <option value="1min">After 1 minute</option>
+                        <option value="5min">After 5 minutes</option>
+                        <option value="15min">After 15 minutes</option>
+                        <option value="never">Never</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Encryption Info */}
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <ShieldCheckIcon className="h-6 w-6 text-green-600 dark:text-green-400 mt-1" />
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-white">End-to-End Encryption</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          All your messages, calls, and shared media are secured with AES-256 encryption.
+                          Only you and the recipient can read the messages.
+                        </p>
+                        <button className="text-sm text-green-600 dark:text-green-400 mt-2 hover:underline">
+                          Learn more about encryption
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Appearance Tab */}
+            {activeTab === 'appearance' && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Appearance Settings</h2>
+                
+                <div className="space-y-8">
+                  {/* Theme Selection */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">Theme</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {themeOptions.map((option) => {
+                        const Icon = option.icon;
+                        return (
+                          <button
+                            key={option.id}
+                            onClick={() => setTheme(option.id)}
+                            className={`p-4 rounded-xl border-2 transition-all ${
+                              theme === option.id
+                                ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20'
+                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`p-3 rounded-lg ${
+                                theme === option.id
+                                  ? 'bg-indigo-100 dark:bg-indigo-900/30'
+                                  : 'bg-gray-100 dark:bg-gray-700'
+                              }`}>
+                                <Icon className={`h-6 w-6 ${
+                                  theme === option.id
+                                    ? 'text-indigo-600 dark:text-indigo-400'
+                                    : 'text-gray-600 dark:text-gray-400'
+                                }`} />
+                              </div>
+                              <div className="text-left">
+                                <div className="font-medium text-gray-900 dark:text-white">{option.name}</div>
+                                <div className="text-sm text-gray-600 dark:text-gray-400">
+                                  {option.id === 'auto' ? 'Follows system settings' : ''}
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Accent Color */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">Accent Color</h3>
+                    <div className="flex flex-wrap gap-3">
+                      {[
+                        { name: 'Indigo', color: 'bg-indigo-600', selected: true },
+                        { name: 'Blue', color: 'bg-blue-600' },
+                        { name: 'Green', color: 'bg-green-600' },
+                        { name: 'Purple', color: 'bg-purple-600' },
+                        { name: 'Pink', color: 'bg-pink-600' },
+                        { name: 'Orange', color: 'bg-orange-600' }
+                      ].map((color) => (
+                        <button
+                          key={color.name}
+                          className="flex flex-col items-center gap-2"
+                        >
+                          <div className={`w-12 h-12 ${color.color} rounded-full flex items-center justify-center ${
+                            color.selected ? 'ring-2 ring-offset-2 ring-indigo-600 dark:ring-indigo-400' : ''
+                          }`}>
+                            {color.selected && (
+                              <CheckCircleSolid className="h-6 w-6 text-white" />
+                            )}
+                          </div>
+                          <span className="text-sm text-gray-600 dark:text-gray-400">{color.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Chat Background */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">Chat Background</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        { name: 'Default', color: 'bg-white dark:bg-gray-800', border: 'border' },
+                        { name: 'Light Gray', color: 'bg-gray-100', border: 'border' },
+                        { name: 'Dark', color: 'bg-gray-900', border: 'border' },
+                        { name: 'Gradient', color: 'bg-gradient-to-br from-indigo-50 to-purple-50', border: 'border' }
+                      ].map((bg) => (
+                        <button
+                          key={bg.name}
+                          className={`p-4 rounded-xl ${bg.color} ${bg.border} border-gray-200 dark:border-gray-700`}
+                        >
+                          <div className="flex flex-col items-center gap-2">
+                            <div className="w-full h-20 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 opacity-20"></div>
+                            <span className="text-sm font-medium text-gray-900 dark:text-white">{bg.name}</span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                    <button className="btn-secondary w-full mt-4">
+                      <PhotoIcon className="h-5 w-5 mr-2" />
+                      Custom Background
+                    </button>
+                  </div>
+
+                  {/* Font Size */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">Font Size</h3>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Small</span>
+                      <div className="flex-1 mx-4">
+                        <input type="range" min="12" max="18" defaultValue="14" className="w-full" />
+                      </div>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Large</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Data & Storage Tab */}
+            {activeTab === 'data' && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Data & Storage Settings</h2>
+                
+                <div className="space-y-8">
+                  {/* Storage Usage */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">Storage Usage</h3>
+                    <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
+                      <div className="mb-4">
+                        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                          <span>Total Storage Used</span>
+                          <span>1.2 GB of 5 GB</span>
+                        </div>
+                        <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                          <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full" style={{ width: '24%' }}></div>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {[
+                          { type: 'Messages', size: '450 MB', color: 'from-blue-500 to-cyan-500' },
+                          { type: 'Photos', size: '520 MB', color: 'from-green-500 to-emerald-500' },
+                          { type: 'Videos', size: '180 MB', color: 'from-pink-500 to-rose-500' },
+                          { type: 'Documents', size: '50 MB', color: 'from-yellow-500 to-amber-500' }
+                        ].map((item) => (
+                          <div key={item.type} className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${item.color}`}></div>
+                              <span className="text-gray-700 dark:text-gray-300">{item.type}</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span className="text-gray-600 dark:text-gray-400">{item.size}</span>
+                              <button className="text-red-600 dark:text-red-400 text-sm hover:underline">
+                                Clear
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Media Auto-Download */}
+                  <div>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">Media Auto-Download</h3>
+                    <div className="space-y-4">
+                      {[
+                        { network: 'Wi-Fi', photos: 'Auto', videos: 'Auto', documents: 'Auto' },
+                        { network: 'Mobile Data', photos: 'None', videos: 'None', documents: 'None' },
+                        { network: 'Roaming', photos: 'None', videos: 'None', documents: 'None' }
+                      ].map((item) => (
+                        <div key={item.network} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                          <h4 className="font-medium text-gray-900 dark:text-white mb-3">{item.network}</h4>
+                          <div className="grid grid-cols-3 gap-4">
+                            <div>
+                              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Photos</label>
+                              <select className="input-field text-sm py-1">
+                                <option>{item.photos}</option>
+                                <option>Auto</option>
+                                <option>None</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Videos</label>
+                              <select className="input-field text-sm py-1">
+                                <option>{item.videos}</option>
+                                <option>Auto</option>
+                                <option>None</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">Documents</label>
+                              <select className="input-field text-sm py-1">
+                                <option>{item.documents}</option>
+                                <option>Auto</option>
+                                <option>None</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Data Saving */}
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-medium text-gray-900 dark:text-white">Data Saver</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Reduce data usage during calls</p>
+                    </div>
+                    <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-300 dark:bg-gray-600">
+                      <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1" />
+                    </button>
+                  </div>
+
+                  {/* Clear All Data */}
+                  <div className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium text-gray-900 dark:text-white">Clear All Data</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Permanently delete all your messages, media, and account data
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (window.confirm('This will delete ALL your data. This action cannot be undone.')) {
+                            toast.success('All data cleared successfully');
+                          }
+                        }}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700"
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Settings;
+                                
