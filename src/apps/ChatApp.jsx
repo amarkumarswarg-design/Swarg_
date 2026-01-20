@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Bot, User, Sparkles } from 'lucide-react';
+import { Send, Bot, User } from 'lucide-react';
 
 const ChatApp = () => {
   const [messages, setMessages] = useState([
@@ -17,13 +17,12 @@ const ChatApp = () => {
     scrollToBottom();
   }, [messages]);
 
-  const simulateAIResponse = (userMessage) => {
+  const simulateAIResponse = () => {
     const responses = [
-      "That's an interesting question! Let me think about that...",
-      "Based on my knowledge, I can tell you that...",
-      "I understand your concern. Here's what I think...",
+      "That's an interesting question!",
+      "I understand your concern.",
       "Great question! Here's some information that might help...",
-      "I'm happy to help with that! Here's what you need to know...",
+      "I'm happy to help with that!",
     ];
     return responses[Math.floor(Math.random() * responses.length)];
   };
@@ -41,11 +40,10 @@ const ChatApp = () => {
       setInput('');
       setIsTyping(true);
 
-      // Simulate AI thinking
       setTimeout(() => {
         const aiResponse = {
           id: messages.length + 2,
-          text: simulateAIResponse(input),
+          text: simulateAIResponse(),
           isBot: true,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
@@ -64,20 +62,18 @@ const ChatApp = () => {
 
   return (
     <div className="h-full flex flex-col bg-gradient-to-b from-blue-50 to-white">
-      {/* Header */}
       <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-white/20 rounded-xl">
-            <Sparkles className="w-6 h-6 text-white" />
+            <Bot className="w-6 h-6 text-white" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-white">AI Assistant</h1>
-            <p className="text-sm text-white/80">Powered by GPT</p>
+            <p className="text-sm text-white/80">Demo Mode</p>
           </div>
         </div>
       </div>
 
-      {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message) => (
           <div
@@ -121,7 +117,6 @@ const ChatApp = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
       <div className="sticky bottom-0 bg-white border-t p-4">
         <div className="flex gap-2">
           <div className="flex-1 relative">
@@ -146,9 +141,6 @@ const ChatApp = () => {
             </button>
           </div>
         </div>
-        <p className="text-xs text-center text-gray-500 mt-2">
-          AI responses are simulated for demo purposes
-        </p>
       </div>
     </div>
   );
