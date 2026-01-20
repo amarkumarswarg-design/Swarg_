@@ -1,0 +1,480 @@
+// client/src/components/calls/VideoCall.jsx
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  PhoneIcon,
+  VideoCameraIcon,
+  MicrophoneIcon,
+  MicrophoneSlashIcon,
+  VideoCameraSlashIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+  ArrowsPointingOutIcon,
+  XMarkIcon,
+  ChatBubbleLeftRightIcon,
+  UsersIcon,
+  EllipsisHorizontalIcon,
+  ShieldCheckIcon
+} from '@heroicons/react/24/outline';
+import {
+  PhoneIcon as PhoneSolid,
+  VideoCameraIcon as VideoCameraSolid,
+  MicrophoneIcon as MicrophoneSolid,
+  SpeakerWaveIcon as SpeakerSolid
+} from '@heroicons/react/24/solid';
+
+const VideoCall = ({ contact, onEndCall }) => {
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoOff, setIsVideoOff] = useState(false);
+  const [isSpeakerOn, setIsSpeakerOn] = useState(true);
+  const [callDuration, setCallDuration] = useState(0);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showParticipants, setShowParticipants] = useState(false);
+  const [showChat, setShowChat] = useState(false);
+  const [callQuality, setCallQuality] = useState('Excellent');
+  const [encryptionStatus, setEncryptionStatus] = useState(true);
+  
+  const localVideoRef = useRef(null);
+  const remoteVideoRef = useRef(null);
+  const timerRef = useRef(null);
+
+  // Mock participants for group call
+  const [participants, setParticipants] = useState([
+    { id: 1, name: 'Rajesh Kumar', avatar: 'R', speaking: true, video: true },
+    { id: 2, name: 'Priya Sharma', avatar: 'P', speaking: false, video: true },
+    { id: 3, name: 'Amit Singh', avatar: 'A', speaking: false, video: false },
+    { id: 4, name: 'You', avatar: 'A', speaking: true, video: true, isLocal: true },
+  ]);
+
+  // Mock chat messages during call
+  const [chatMessages, setChatMessages] = useState([
+    { id: 1, sender: 'Rajesh', text: 'Can everyone hear me?', time: '2:15' },
+    { id: 2, sender: 'You', text: 'Yes, loud and clear!', time: '2:16' },
+    { id: 3, sender: 'Priya', text: 'Perfect 👌', time: '2:17' },
+  ]);
+
+  // Timer for call duration
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setCallDuration(prev => prev + 1);
+    }, 1000);
+
+    // Simulate call quality changes
+    const qualityInterval = setInterval(() => {
+      const qualities = ['Excellent', 'Good', 'Fair', 'Poor'];
+      const randomQuality = qualities[Math.floor(Math.random() * qualities.length)];
+      setCallQuality(randomQuality);
+    }, 10000);
+
+    // Simulate participants joining/leaving
+    const participantInterval = setInterval(() => {
+      if (Math.random() > 0.7) {
+        const newId = participants.length + 1;
+        setParticipants(prev => [...prev, {
+          id: newId,
+          name: `Guest ${newId}`,
+          avatar: 'G',
+          speaking: false,
+          video: true
+        }]);
+      }
+    }, 15000);
+
+    return () => {
+      clearInterval(timerRef.current);
+      clearInterval(qualityInterval);
+      clearInterval(participantInterval);
+    };
+  }, []);
+
+  // Format call duration
+  const formatDuration = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Toggle mute
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    // Here you would actually mute the audio track
+  };
+
+  // Toggle video
+  const toggleVideo = () => {
+    setIsVideoOff(!isVideoOff);
+    // Here you would actually disable/enable the video track
+  };
+
+  // Toggle speaker
+  const toggleSpeaker = () => {
+    setIsSpeakerOn(!isSpeakerOn);
+  };
+
+  // Toggle full screen
+  const toggleFullScreen = () => {
+    setIsFullScreen(!isFullScreen);
+    if (!isFullScreen) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  };
+
+  // End call
+  const handleEndCall = () => {
+    clearInterval(timerRef.current);
+    if (onEndCall) onEndCall();
+  };
+
+  // Send chat message
+  const sendChatMessage = (text) => {
+    const newMessage = {
+      id: chatMessages.length + 1,
+      sender: 'You',
+      text: text,
+      time: formatDuration(callDuration)
+    };
+    setChatMessages(prev => [...prev, newMessage]);
+  };
+
+  return (
+    <div className={`fixed inset-0 bg-gray-900 z-50 ${isFullScreen ? 'fullscreen' : ''}`}>
+      {/* Main Video Grid */}
+      <div className="h-full flex flex-col">
+        {/* Top Bar */}
+        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-900/80 to-black/80">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                {contact?.avatar || 'C'}
+              </div>
+              <div>
+                <h2 className="text-white font-semibold">
+                  {contact?.name || 'Group Call'}
+                  {participants.length > 2 && ` (${participants.length})`}
+                </h2>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-green-400">● {formatDuration(callDuration)}</span>
+                  <span className="text-gray-300">•</span>
+                  <span className="text-gray-300">{callQuality} connection</span>
+                  {encryptionStatus && (
+                    <>
+                      <span className="text-gray-300">•</span>
+                      <ShieldCheckIcon className="h-4 w-4 text-green-400" />
+                      <span className="text-green-400">End-to-end encrypted</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* Call Quality Indicator */}
+            <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-gray-800/70 rounded-full">
+              <div className="flex gap-1">
+                {[1, 2, 3, 4].map((bar) => (
+                  <div
+                    key={bar}
+                    className={`w-1 h-${bar} rounded-full ${
+                      callQuality === 'Excellent' && bar <= 4 ? 'bg-green-400' :
+                      callQuality === 'Good' && bar <= 3 ? 'bg-green-400' :
+                      callQuality === 'Fair' && bar <= 2 ? 'bg-yellow-400' :
+                      callQuality === 'Poor' && bar <= 1 ? 'bg-red-400' : 'bg-gray-600'
+                    }`}
+                  ></div>
+                ))}
+              </div>
+              <span className="text-sm text-gray-300">{callQuality}</span>
+            </div>
+
+            {/* Minimize button */}
+            <button
+              onClick={() => setIsFullScreen(false)}
+              className="p-2 rounded-full bg-gray-800/70 text-gray-300 hover:bg-gray-700/70"
+            >
+              <ArrowsPointingOutIcon className="h-5 w-5" />
+            </button>
+
+            {/* Close button */}
+            <button
+              onClick={handleEndCall}
+              className="p-2 rounded-full bg-red-600 text-white hover:bg-red-700"
+            >
+              <XMarkIcon className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Video Area */}
+        <div className="flex-1 relative">
+          {/* Remote Video */}
+          <div className="absolute inset-0">
+            {isVideoOff ? (
+              <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-32 h-32 bg-gradient-to-r from-gray-700 to-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <VideoCameraSlashIcon className="h-16 w-16 text-gray-500" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-300">{contact?.name}</h3>
+                  <p className="text-gray-400">Video is turned off</p>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full h-full bg-black">
+                {/* Simulated video feed */}
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="relative">
+                    <div className="w-96 h-96 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 rounded-3xl overflow-hidden">
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-64 h-64 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 rounded-full animate-pulse"></div>
+                      </div>
+                    </div>
+                    <div className="absolute top-4 left-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                      {contact?.name}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Local Video Preview */}
+          <div className="absolute bottom-4 right-4 w-48 h-36 rounded-xl overflow-hidden border-2 border-white shadow-lg">
+            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+              {isVideoOff ? (
+                <div className="text-center">
+                  <VideoCameraSlashIcon className="h-8 w-8 text-gray-500 mx-auto mb-2" />
+                  <p className="text-xs text-gray-400">Your video is off</p>
+                </div>
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-indigo-600/30 to-purple-600/30 flex items-center justify-center">
+                  <div className="w-20 h-20 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                    A
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-0.5 rounded text-xs">
+              You
+            </div>
+          </div>
+
+          {/* Participants Panel */}
+          {showParticipants && (
+            <div className="absolute top-4 left-4 w-80 bg-gray-900/90 rounded-xl shadow-2xl backdrop-blur-sm">
+              <div className="p-4 border-b border-gray-700">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white font-semibold">Participants ({participants.length})</h3>
+                  <button
+                    onClick={() => setShowParticipants(false)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <XMarkIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="p-2 max-h-96 overflow-y-auto">
+                {participants.map((participant) => (
+                  <div
+                    key={participant.id}
+                    className={`flex items-center gap-3 p-3 rounded-lg ${
+                      participant.speaking ? 'bg-indigo-900/30' : 'hover:bg-gray-800/50'
+                    }`}
+                  >
+                    <div className="relative">
+                      <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                        {participant.avatar}
+                      </div>
+                      {participant.speaking && (
+                        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-900"></div>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-white">
+                          {participant.name}
+                          {participant.isLocal && ' (You)'}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {participant.video ? (
+                            <VideoCameraIcon className="h-4 w-4 text-green-400" />
+                          ) : (
+                            <VideoCameraSlashIcon className="h-4 w-4 text-gray-400" />
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        {participant.speaking ? 'Speaking...' : 'Connected'}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Chat Panel */}
+          {showChat && (
+            <div className="absolute top-4 right-4 w-80 h-5/6 bg-gray-900/90 rounded-xl shadow-2xl backdrop-blur-sm flex flex-col">
+              <div className="p-4 border-b border-gray-700">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white font-semibold">Call Chat</h3>
+                  <button
+                    onClick={() => setShowChat(false)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    <XMarkIcon className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex-1 p-4 overflow-y-auto">
+                <div className="space-y-4">
+                  {chatMessages.map((message) => (
+                    <div
+                      key={message.id}
+                      className={`p-3 rounded-2xl max-w-[80%] ${
+                        message.sender === 'You'
+                          ? 'ml-auto bg-gradient-to-r from-indigo-500 to-purple-500 text-white'
+                          : 'bg-gray-800 text-gray-200'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-semibold">{message.sender}</span>
+                        <span className="text-xs opacity-70">{message.time}</span>
+                      </div>
+                      <p>{message.text}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="p-4 border-t border-gray-700">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Type a message..."
+                    className="flex-1 bg-gray-800 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && e.target.value.trim()) {
+                        sendChatMessage(e.target.value.trim());
+                        e.target.value = '';
+                      }
+                    }}
+                  />
+                  <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                    Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Controls */}
+        <div className="p-6 bg-gradient-to-t from-black/90 to-transparent">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center gap-6">
+              {/* Mute Toggle */}
+              <button
+                onClick={toggleMute}
+                className={`p-4 rounded-full ${
+                  isMuted
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-gray-800/70 text-gray-300 hover:bg-gray-700/70'
+                }`}
+              >
+                {isMuted ? (
+                  <MicrophoneSlashIcon className="h-6 w-6" />
+                ) : (
+                  <MicrophoneIcon className="h-6 w-6" />
+                )}
+              </button>
+
+              {/* Video Toggle */}
+              <button
+                onClick={toggleVideo}
+                className={`p-4 rounded-full ${
+                  isVideoOff
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-gray-800/70 text-gray-300 hover:bg-gray-700/70'
+                }`}
+              >
+                {isVideoOff ? (
+                  <VideoCameraSlashIcon className="h-6 w-6" />
+                ) : (
+                  <VideoCameraIcon className="h-6 w-6" />
+                )}
+              </button>
+
+              {/* Speaker Toggle */}
+              <button
+                onClick={toggleSpeaker}
+                className={`p-4 rounded-full ${
+                  isSpeakerOn
+                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    : 'bg-gray-800/70 text-gray-300 hover:bg-gray-700/70'
+                }`}
+              >
+                {isSpeakerOn ? (
+                  <SpeakerWaveIcon className="h-6 w-6" />
+                ) : (
+                  <SpeakerXMarkIcon className="h-6 w-6" />
+                )}
+              </button>
+
+              {/* Participants */}
+              <button
+                onClick={() => setShowParticipants(!showParticipants)}
+                className={`p-4 rounded-full ${
+                  showParticipants
+                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    : 'bg-gray-800/70 text-gray-300 hover:bg-gray-700/70'
+                }`}
+              >
+                <UsersIcon className="h-6 w-6" />
+              </button>
+
+              {/* Chat */}
+              <button
+                onClick={() => setShowChat(!showChat)}
+                className={`p-4 rounded-full ${
+                  showChat
+                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    : 'bg-gray-800/70 text-gray-300 hover:bg-gray-700/70'
+                }`}
+              >
+                <ChatBubbleLeftRightIcon className="h-6 w-6" />
+              </button>
+
+              {/* More Options */}
+              <button className="p-4 rounded-full bg-gray-800/70 text-gray-300 hover:bg-gray-700/70">
+                <EllipsisHorizontalIcon className="h-6 w-6" />
+              </button>
+
+              {/* End Call Button */}
+              <button
+                onClick={handleEndCall}
+                className="p-4 rounded-full bg-red-600 text-white hover:bg-red-700 animate-pulse"
+              >
+                <PhoneSolid className="h-6 w-6 rotate-135" />
+              </button>
+            </div>
+
+            {/* Control Labels */}
+            <div className="flex items-center justify-center gap-12 mt-4 text-sm text-gray-400">
+              <span>{isMuted ? 'Unmute' : 'Mute'}</span>
+              <span>{isVideoOff ? 'Start Video' : 'Stop Video'}</span>
+              <span>{isSpeakerOn ? 'Speaker On' : 'Speaker Off'}</span>
+              <span>Participants</span>
+              <span>Chat</span>
+              <span>Options</span>
+              <span className="text-red-400 font-semibold">End Call</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default VideoCall;
