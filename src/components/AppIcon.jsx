@@ -1,20 +1,31 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import * as LucideIcons from 'lucide-react';
 
 const AppIcon = ({ app, size = 'md', onClick }) => {
-  const IconComponent = LucideIcons[app.icon] || LucideIcons['Smartphone'];
-  
-  const sizeClasses = {
-    sm: 'w-12 h-12',
-    md: 'w-16 h-16',
-    lg: 'w-20 h-20',
+  const getIcon = (appId) => {
+    const icons = {
+      'phone': '📞',
+      'messages': '💬',
+      'mail': '📧',
+      'calendar': '📅',
+      'photos': '🖼️',
+      'camera': '📸',
+      'music': '🎵',
+      'maps': '🗺️',
+      'weather': '☀️',
+      'notes': '📝',
+      'chat': '🤖',
+      'portfolio': '💼',
+      'calculator': '🧮',
+      'settings': '⚙️'
+    };
+    return icons[appId] || '📱';
   };
 
-  const iconSizes = {
-    sm: 24,
-    md: 32,
-    lg: 40,
+  const sizeClasses = {
+    sm: 'w-12 h-12 text-xl',
+    md: 'w-16 h-16 text-2xl',
+    lg: 'w-20 h-20 text-3xl',
   };
 
   return (
@@ -23,10 +34,7 @@ const AppIcon = ({ app, size = 'md', onClick }) => {
       onClick={onClick}
       className={`${sizeClasses[size]} rounded-2xl flex items-center justify-center ${app.color} shadow-lg hover:shadow-xl transition-shadow cursor-pointer`}
     >
-      <IconComponent 
-        size={iconSizes[size]} 
-        className="text-white" 
-      />
+      {getIcon(app.id)}
     </motion.button>
   );
 };
