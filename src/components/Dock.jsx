@@ -5,10 +5,7 @@ import AppIcon from './AppIcon';
 const Dock = ({ apps, onAppClick }) => {
   return (
     <div className="relative px-6 pb-6">
-      {/* Glassmorphic Background */}
       <div className="absolute inset-0 -top-4 backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl" />
-      
-      {/* Dock Icons */}
       <div className="relative flex justify-around items-center py-4">
         {apps.map((app, index) => (
           <motion.div
